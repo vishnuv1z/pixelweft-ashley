@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 
 const allProjects = [
-  { title: "NeuralVault", category: "AI/ML", year: "2025", desc: "Enterprise AI analytics platform with predictive insights and natural language querying." },
-  { title: "SwiftCart", category: "Mobile App", year: "2024", desc: "E-commerce app with AR product preview, real-time tracking, and seamless payments." },
-  { title: "CloudSync Pro", category: "Web Dev", year: "2025", desc: "Collaboration suite with real-time editing, video conferencing, and project management." },
-  { title: "HealthPulse", category: "AI/ML", year: "2024", desc: "AI-powered health monitoring system with predictive diagnostics and telemedicine." },
-  { title: "UrbanFlow", category: "Mobile App", year: "2024", desc: "Smart city navigation app with real-time transit data and accessibility features." },
-  { title: "DevForge", category: "Web Dev", year: "2025", desc: "Developer productivity platform with CI/CD pipelines and code analytics." },
+  { title: "NeuralVault", category: "AI/ML", year: "2025", desc: "Enterprise AI analytics platform with predictive insights and natural language querying.", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop" },
+  { title: "SwiftCart", category: "Mobile App", year: "2024", desc: "E-commerce app with AR product preview, real-time tracking, and seamless payments.", image: "https://images.unsplash.com/photo-1618761714954-0b8cd0026356?q=80&w=800&auto=format&fit=crop" },
+  { title: "CloudSync Pro", category: "Web Dev", year: "2025", desc: "Collaboration suite with real-time editing, video conferencing, and project management.", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" },
+  { title: "HealthPulse", category: "AI/ML", year: "2024", desc: "AI-powered health monitoring system with predictive diagnostics and telemedicine.", image: "https://images.unsplash.com/photo-1633458000494-0ab1db4268e3?q=80&w=800&auto=format&fit=crop" },
+  { title: "UrbanFlow", category: "Mobile App", year: "2024", desc: "Smart city navigation app with real-time transit data and accessibility features.", image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800&auto=format&fit=crop" },
+  { title: "DevForge", category: "Web Dev", year: "2025", desc: "Developer productivity platform with CI/CD pipelines and code analytics.", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop" },
 ];
 
 const categories = ["All", "Web Dev", "Mobile App", "AI/ML"];
@@ -68,10 +68,13 @@ const Projects = () => {
           <div className="staggered-grid">
             {filtered.map((p, i) => (
               <div key={p.title} className="project-card animate-fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
-                <div className="project-card-preview group">
-                  <span className="text-muted-foreground/20 font-display text-6xl md:text-7xl font-bold select-none transition-colors duration-300 group-hover:text-muted-foreground/30">
-                    {p.title.charAt(0)}
-                  </span>
+                <div className="project-card-preview group overflow-hidden relative">
+                  <img 
+                    src={p.image} 
+                    alt={p.title} 
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-[600ms] ease-out" 
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
                 </div>
                 <div className="project-card-meta">
                   <h3 className="font-display text-lg font-semibold text-foreground">{p.title}</h3>

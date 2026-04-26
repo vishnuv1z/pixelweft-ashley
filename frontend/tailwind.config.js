@@ -15,7 +15,7 @@ export default {
         sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Poppins", "Inter", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
-        pixel: ["Silkscreen", "monospace"],
+        pixel: ["VT323", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

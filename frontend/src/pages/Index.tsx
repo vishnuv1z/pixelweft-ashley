@@ -4,19 +4,131 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import SectionHeading from "@/components/SectionHeading";
-import { Code, Smartphone, Brain, ArrowRight, Star } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Code, Smartphone, Brain, ArrowRight, Star, PenTool, Cloud, Bot, Activity } from "lucide-react";
 
-const services = [
-  { icon: Code, title: "Web Development", desc: "Stunning, performant web applications built with cutting-edge frameworks." },
-  { icon: Smartphone, title: "Mobile Apps", desc: "Native and cross-platform mobile experiences that users love." },
-  { icon: Brain, title: "AI Tools & Automation", desc: "We build custom AI tools and automation workflows that streamline your business and unlock new possibilities." },
+const allServices = [
+  { id: 1, icon: Code, title: "Web Development", desc: "Stunning, performant web applications built with cutting-edge frameworks." },
+  { id: 2, icon: Smartphone, title: "Mobile App Development", desc: "Native and cross-platform mobile experiences that users love." },
+  { id: 3, icon: PenTool, title: "UI/UX Design", desc: "Premium, minimal interfaces that drive deep user engagement." },
+  { id: 4, icon: Cloud, title: "SaaS Development", desc: "Scalable software-as-a-service architecture engineered for rapid growth." },
+  { id: 5, icon: Bot, title: "AI Tools & Chatbots", desc: "Custom AI integrations that streamline your workflow and unlock new possibilities." },
+  { id: 6, icon: Activity, title: "Automation Workflow", desc: "Automate repetitive tasks and supercharge your team's operational efficiency." },
 ];
 
+function StackedCard({ service, index, scrollYProgress }: { key?: number, service: any, index: number, scrollYProgress: any }) {
+  const startEnter = index * 0.14; 
+  const fullyEntered = startEnter + 0.10;
+  
+  const opacity = useTransform(scrollYProgress, [startEnter, fullyEntered], [0, 1]);
+  
+  const combinedY = useTransform(scrollYProgress, (p: number) => {
+      let currentY = 0;
+      if (p < startEnter) currentY = 300;
+      else if (p < fullyEntered) {
+         const ratio = (p - startEnter) / (fullyEntered - startEnter);
+         const easeRatio = 1 - Math.pow(1 - ratio, 3);
+         currentY = 300 * (1 - easeRatio);
+      } else currentY = 0;
+  
+      let currentTransY = 0;
+      if (p >= fullyEntered) {
+          const numAhead = (p - fullyEntered) / 0.14;
+          const ahead = Math.max(0, Math.min(numAhead, 5 - index));
+          currentTransY = ahead * -35;
+      }
+      return currentY + currentTransY;
+  });
+
+  const scale = useTransform(scrollYProgress, (p: number) => {
+      if (p < fullyEntered) return 1;
+      const numAhead = (p - fullyEntered) / 0.14;
+      const ahead = Math.max(0, Math.min(numAhead, 5 - index));
+      return 1 - ahead * 0.05;
+  });
+
+  return (
+    <motion.div
+      layout
+      layoutId={`card-${service.id}`}
+      style={{
+        y: combinedY,
+        scale,
+        opacity,
+        zIndex: index,
+      }}
+      transition={{ type: "spring", stiffness: 200, damping: 25 }}
+      className="absolute w-full max-w-lg glass rounded-[2.5rem] p-10 flex flex-col items-center text-center gap-5 shadow-2xl border border-white/10"
+    >
+      <div className="p-5 rounded-3xl bg-white/5 border border-white/10 shadow-inner">
+        <service.icon size={40} className="text-indigo-400" />
+      </div>
+      <h3 className="text-3xl font-display font-semibold text-foreground tracking-tight">{service.title}</h3>
+      <p className="text-muted-foreground text-lg leading-relaxed font-light">{service.desc}</p>
+    </motion.div>
+  );
+}
+
+function ScrollServices() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const [isGrid, setIsGrid] = useState(false);
+
+  useEffect(() => {
+    return scrollYProgress.on("change", (latest) => {
+      setIsGrid(latest >= 0.85); 
+    });
+  }, [scrollYProgress]);
+
+  return (
+    <div ref={containerRef} className="relative h-[450vh] w-full mb-40 lg:mb-64">
+      <div className="sticky top-0 min-h-screen w-full flex flex-col items-center pt-24 md:pt-28">
+        
+        <div className="text-center z-20 mb-6 md:mb-8 px-6">
+          <SectionHeading tag="What We Do" title="Services Built for Scale" description="From concept to launch, we deliver end-to-end digital solutions." />
+        </div>
+
+        <div className="relative flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 pb-20">
+          {isGrid ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 w-full place-items-center">
+               {allServices.map((service) => (
+                  <motion.div
+                    key={service.id}
+                    layout
+                    layoutId={`card-${service.id}`}
+                    transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                    className="glass rounded-3xl p-5 md:p-6 lg:p-8 flex flex-col items-start gap-3 lg:gap-4 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] hover:border-indigo-500/30 transition-colors duration-300 w-full"
+                  >
+                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                      <service.icon size={22} className="text-indigo-400" />
+                    </div>
+                    <h3 className="text-lg md:text-xl font-display font-semibold text-foreground">{service.title}</h3>
+                    <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{service.desc}</p>
+                  </motion.div>
+               ))}
+            </div>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {allServices.map((service, index) => (
+                <StackedCard key={service.id} service={service} index={index} scrollYProgress={scrollYProgress} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const featuredProjects = [
-  { title: "NeuralVault", category: "AI / ML", year: "2025" },
-  { title: "SwiftCart", category: "Mobile App", year: "2024" },
-  { title: "CloudSync Pro", category: "Web Dev", year: "2025" },
-  { title: "HealthPulse", category: "AI / ML", year: "2024" },
+  { title: "NeuralVault", category: "AI / ML", year: "2025", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop" },
+  { title: "SwiftCart", category: "Mobile App", year: "2024", image: "https://images.unsplash.com/photo-1618761714954-0b8cd0026356?q=80&w=800&auto=format&fit=crop" },
+  { title: "CloudSync Pro", category: "Web Dev", year: "2025", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" },
+  { title: "HealthPulse", category: "AI / ML", year: "2024", image: "https://images.unsplash.com/photo-1633458000494-0ab1db4268e3?q=80&w=800&auto=format&fit=crop" },
 ];
 
 const testimonials = [
@@ -106,7 +218,7 @@ const Index = () => (
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.1] text-foreground animate-fade-up" style={{ animationDelay: "0.1s" }}>
           <span className="font-display">Weaving </span>
-          <span className="font-pixel text-[0.75em] align-baseline tracking-wider">Pixels</span>
+          <span className="font-pixel text-[1.0em] align-baseline tracking-wider">Pixels</span>
           <br />
           <span className="font-display">Into </span>
           <span className="font-serif italic font-semibold">Reality</span>
@@ -137,20 +249,8 @@ const Index = () => (
     </section>
 
     {/* Services */}
-    <section className="section-padding relative">
-      <SectionHeading tag="What We Do" title="Services Built for Scale" description="From concept to launch, we deliver end-to-end digital solutions." />
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        {services.map((s, i) => (
-          <div key={s.title} className="glass hover-lift p-8 space-y-4 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-border/60 flex items-center justify-center">
-              <s.icon size={22} className="text-foreground" />
-            </div>
-            <h3 className="font-display text-xl font-semibold text-foreground">{s.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+    {/* Services */}
+    <ScrollServices />
 
     {/* Featured Projects */}
     <section className="section-padding relative">
@@ -158,10 +258,13 @@ const Index = () => (
       <div className="max-w-6xl mx-auto staggered-grid">
         {featuredProjects.map((p, i) => (
           <div key={p.title} className="project-card animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-            <div className="project-card-preview group">
-              <span className="text-muted-foreground/20 font-display text-6xl md:text-7xl font-bold select-none transition-colors duration-300 group-hover:text-muted-foreground/30">
-                {p.title.charAt(0)}
-              </span>
+            <div className="project-card-preview group overflow-hidden relative">
+              <img 
+                src={p.image} 
+                alt={p.title} 
+                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-[600ms] ease-out" 
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
             </div>
             <div className="project-card-meta">
               <h3 className="font-display text-lg font-semibold text-foreground">{p.title}</h3>

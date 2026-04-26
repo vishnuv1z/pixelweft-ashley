@@ -4,7 +4,7 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import SectionHeading from "@/components/SectionHeading";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Compass, PenTool, Code2, Rocket } from "lucide-react";
 
 /* ── Storytelling slides ─────────────────────────────────── */
 const storySlides = [
@@ -32,19 +32,83 @@ const storySlides = [
 
 /* ── Process steps ───────────────────────────────────────── */
 const processSteps = [
-  { num: "01", title: "Discovery", desc: "We immerse ourselves in your business, users, and competitive landscape to define clear objectives." },
-  { num: "02", title: "Design", desc: "Our designers craft intuitive, stunning interfaces through rapid prototyping and iteration." },
-  { num: "03", title: "Development", desc: "We build with modern frameworks, clean architecture, and rigorous testing at every stage." },
-  { num: "04", title: "Launch", desc: "We deploy, monitor, and iterate — ensuring your product thrives in the real world." },
+  { num: "01", title: "Discovery", icon: Compass, desc: "We begin by immersing ourselves in your business ecosystem. Through collaborative workshops and deep-dive research, we analyze your competitive landscape, understand user pain points, and define a clear, strategic roadmap that ensures every pixel aligns with your ultimate business objectives." },
+  { num: "02", title: "Design", icon: PenTool, desc: "Our design philosophy centers on form meeting function. We craft intuitive, stunningly minimal interfaces through rapid prototyping, wireframing, and continuous iteration. The result is a premium user experience that feels both effortless and deeply engaging." },
+  { num: "03", title: "Development", icon: Code2, desc: "Transformation from design to reality happens here. We build using cutting-edge, scalable frameworks and clean, modular architecture. With rigorous automated testing and adherence to performance best practices, we ensure the final product is lightning-fast and universally robust." },
+  { num: "04", title: "Launch", icon: Rocket, desc: "Deployment is just the beginning. We implement smooth, zero-downtime launches backed by comprehensive monitoring and analytics. We continue to iterate post-launch, ensuring your digital product not only thrives in the real world but adapts to future market demands." },
 ];
 
 /* ── Stats ───────────────────────────────────────────────── */
 const stats = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "30+", label: "Happy Clients" },
-  { value: "15+", label: "Team Members" },
-  { value: "3+", label: "Years of Excellence" },
+  { target: 50, suffix: "+", label: "Projects Delivered" },
+  { target: 30, suffix: "+", label: "Happy Clients" },
+  { target: 15, suffix: "+", label: "Team Members" },
+  { target: 3, suffix: "+", label: "Years of Excellence" },
 ];
+
+/* ── Count-up Animation ──────────────────────────────────── */
+function useCountUp(target: number, duration = 2000, trigger = false) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!trigger) return;
+    let start = 0;
+    const startTime = performance.now();
+
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(eased * target);
+
+      if (current !== start) {
+        start = current;
+        setCount(current);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        setCount(target);
+      }
+    };
+
+    requestAnimationFrame(step);
+  }, [trigger, target, duration]);
+
+  return count;
+}
+
+function StatItem({ target, suffix, label, delay }: { target: number; suffix: string; label: string; delay: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const count = useCountUp(target, target > 10 ? 2000 : 1200, visible);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="text-center animate-fade-up" style={{ animationDelay: `${delay}s` }}>
+      <p className="font-display text-4xl md:text-5xl font-bold text-foreground tabular-nums">
+        {count}{suffix}
+      </p>
+      <p className="text-sm text-muted-foreground mt-2">{label}</p>
+    </div>
+  );
+}
 
 /* ── Scroll Storytelling ─────────────────────────────────── */
 function ScrollStorytelling() {
@@ -161,20 +225,37 @@ const About = () => (
         title="Our Process"
         description="Four deliberate phases that turn ambitious ideas into polished digital products."
       />
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {processSteps.map((step, i) => (
-          <div
-            key={step.num}
-            className="process-card animate-fade-up"
-            style={{ animationDelay: `${i * 0.1}s` }}
-          >
-            <span className="process-card-num">{step.num}</span>
-            <h3 className="font-display text-xl font-semibold text-foreground mt-4 mb-2">
-              {step.title}
-            </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
-          </div>
-        ))}
+      <div className="max-w-5xl mx-auto flex flex-col gap-8 md:gap-12">
+        {processSteps.map((step, i) => {
+          const isReversed = i % 2 !== 0;
+          return (
+            <div
+              key={step.num}
+              className={`glass rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16 animate-fade-up ${
+                isReversed ? "md:flex-row-reverse" : ""
+              }`}
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              {/* Title & Icon side */}
+              <div className={`flex-shrink-0 md:w-1/3 flex flex-col gap-2 ${isReversed ? 'items-end text-right' : 'items-start text-left'}`}>
+                <span className="text-sm font-mono text-muted-foreground/60 tracking-widest">{step.num}</span>
+                <h3 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                  {step.title}
+                </h3>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md inline-flex mt-2">
+                  <step.icon size={28} className="text-foreground/90" strokeWidth={1.5} />
+                </div>
+              </div>
+
+              {/* Description side */}
+              <div className={`flex-1 ${isReversed ? 'text-right' : 'text-left'}`}>
+                <p className="text-muted-foreground text-base md:text-lg leading-relaxed font-light">
+                  {step.desc}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
 
@@ -182,14 +263,13 @@ const About = () => (
     <section className="section-padding">
       <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10">
         {stats.map((s, i) => (
-          <div
+          <StatItem
             key={s.label}
-            className="text-center animate-fade-up"
-            style={{ animationDelay: `${i * 0.1}s` }}
-          >
-            <p className="font-display text-4xl md:text-5xl font-bold text-foreground">{s.value}</p>
-            <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
-          </div>
+            target={s.target}
+            suffix={s.suffix}
+            label={s.label}
+            delay={i * 0.1}
+          />
         ))}
       </div>
     </section>
