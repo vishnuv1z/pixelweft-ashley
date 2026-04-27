@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import SectionHeading from "@/components/SectionHeading";
+import TestimonialShowcase from "@/components/TestimonialShowcase";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Code, Smartphone, Brain, ArrowRight, Star, PenTool, Cloud, Bot, Activity } from "lucide-react";
+import { Code, Smartphone, Brain, ArrowRight, PenTool, Cloud, Bot, Activity } from "lucide-react";
 
 const allServices = [
   { id: 1, icon: Code, title: "Web Development", desc: "Stunning, performant web applications built with cutting-edge frameworks." },
@@ -80,12 +81,12 @@ function ScrollServices() {
 
   useEffect(() => {
     return scrollYProgress.on("change", (latest) => {
-      setIsGrid(latest >= 0.85); 
+      setIsGrid(latest >= 0.88); 
     });
   }, [scrollYProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-[450vh] w-full mb-40 lg:mb-64">
+    <div ref={containerRef} className="relative h-[400vh] w-full mb-40 lg:mb-64">
       <div className="sticky top-0 min-h-screen w-full flex flex-col items-center pt-24 md:pt-28">
         
         <div className="text-center z-20 mb-6 md:mb-8 px-6">
@@ -128,13 +129,31 @@ const featuredProjects = [
   { title: "NeuralVault", category: "AI / ML", year: "2025", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop" },
   { title: "SwiftCart", category: "Mobile App", year: "2024", image: "https://images.unsplash.com/photo-1618761714954-0b8cd0026356?q=80&w=800&auto=format&fit=crop" },
   { title: "CloudSync Pro", category: "Web Dev", year: "2025", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" },
-  { title: "HealthPulse", category: "AI / ML", year: "2024", image: "https://images.unsplash.com/photo-1633458000494-0ab1db4268e3?q=80&w=800&auto=format&fit=crop" },
+  { title: "HealthPulse", category: "AI / ML", year: "2024", image: "https://thumbs.dreamstime.com/b/health-control-application-smartphone-pulse-arterial-pressure-concept-modern-medical-technology-131215608.jpg" },
 ];
 
 const testimonials = [
-  { name: "Sarah Chen", role: "CTO, TechNova", text: "PixelWeft transformed our vision into a product that exceeded all expectations. Their attention to detail is unmatched.", rating: 5 },
-  { name: "Marcus Rodriguez", role: "Founder, LaunchPad", text: "Working with PixelWeft felt like having a world-class team in-house. They delivered ahead of schedule.", rating: 5 },
-  { name: "Emily Watkins", role: "Product Lead, Orbis", text: "The quality of work and creative problem-solving set PixelWeft apart from every agency we've worked with.", rating: 5 },
+  {
+    name: "Sarah Chen",
+    role: "CTO, TechNova",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    text: "PixelWeft completely transformed our vision into a product that exceeded every expectation we had. From the initial discovery sessions to the final pixel-perfect handoff, their attention to detail, technical depth, and design sensibility were absolutely unmatched. They didn't just build what we asked for — they challenged our assumptions and pushed us toward a far better product.",
+    rating: 5,
+  },
+  {
+    name: "Marcus Rodriguez",
+    role: "Founder, LaunchPad",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    text: "Working with PixelWeft felt like having a world-class engineering and design team embedded right inside our company. They understood our startup's pace, adapted to shifting priorities without missing a beat, and delivered ahead of schedule. The level of craft in every screen and interaction was something we'd never experienced with any other agency before.",
+    rating: 5,
+  },
+  {
+    name: "Emily Watkins",
+    role: "Product Lead, Orbis",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    text: "The quality of work, creative problem-solving, and genuine partnership set PixelWeft apart from every agency we've collaborated with over the past decade. They brought fresh ideas to the table at every stage, maintained impeccable communication throughout, and delivered a product that our entire team is genuinely proud to ship. I can't recommend them highly enough.",
+    rating: 5,
+  },
 ];
 
 const stats = [
@@ -287,21 +306,8 @@ const Index = () => (
     {/* Testimonials */}
     <section className="section-padding relative">
       <SectionHeading tag="Testimonials" title="What Our Clients Say" />
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        {testimonials.map((t, i) => (
-          <div key={t.name} className="glass p-8 space-y-4 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-            <div className="flex gap-1">
-              {Array.from({ length: t.rating }).map((_, j) => (
-                <Star key={j} size={14} className="fill-foreground/60 text-foreground/60" />
-              ))}
-            </div>
-            <p className="text-muted-foreground text-sm leading-relaxed italic">"{t.text}"</p>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{t.name}</p>
-              <p className="text-xs text-muted-foreground">{t.role}</p>
-            </div>
-          </div>
-        ))}
+      <div className="max-w-6xl mx-auto">
+        <TestimonialShowcase testimonials={testimonials} autoPlayDuration={5000} />
       </div>
     </section>
 
