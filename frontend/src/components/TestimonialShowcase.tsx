@@ -16,7 +16,7 @@ interface TestimonialShowcaseProps {
 }
 
 const MARQUEE_ITEMS = [
-  "Trusted by Founders",
+  "Trusted by Founders", 
   "Startups",
   "Businesses",
   "Creators",
@@ -76,62 +76,87 @@ export default function TestimonialShowcase({
 }: TestimonialShowcaseProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const progressRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const elapsedRef = useRef<number>(0);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const currentIndexRef = useRef(currentIndex);
+  const isPausedRef = useRef(isPaused);
+
+  // Keep refs in sync with state
+  currentIndexRef.current = currentIndex;
+  isPausedRef.current = isPaused;
+
+  const resetProgress = useCallback(() => {
+    elapsedRef.current = 0;
+    startTimeRef.current = 0;
+    if (fillRef.current) {
+      fillRef.current.style.width = '0%';
+    }
+  }, []);
 
   const goTo = useCallback(
     (newIndex: number, dir: number) => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setDirection(dir);
       setCurrentIndex(newIndex);
-      setProgress(0);
-      elapsedRef.current = 0;
-      startTimeRef.current = 0;
+      resetProgress();
     },
-    []
+    [resetProgress]
   );
 
   const goNext = useCallback(() => {
-    const next = (currentIndex + 1) % testimonials.length;
+    const next = (currentIndexRef.current + 1) % testimonials.length;
     goTo(next, 1);
-  }, [currentIndex, testimonials.length, goTo]);
+  }, [testimonials.length, goTo]);
 
   const goPrev = useCallback(() => {
-    const prev = (currentIndex - 1 + testimonials.length) % testimonials.length;
+    const prev =
+      (currentIndexRef.current - 1 + testimonials.length) %
+      testimonials.length;
     goTo(prev, -1);
-  }, [currentIndex, testimonials.length, goTo]);
+  }, [testimonials.length, goTo]);
 
-  // Auto-play progress animation
+  // Auto-play progress animation — direct DOM updates, no setState per frame
   useEffect(() => {
     if (isPaused) {
-      if (progressRef.current) cancelAnimationFrame(progressRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       return;
     }
 
     startTimeRef.current = performance.now() - elapsedRef.current;
 
     const tick = (now: number) => {
+      if (isPausedRef.current) return;
+
       const elapsed = now - startTimeRef.current;
       elapsedRef.current = elapsed;
       const pct = Math.min(elapsed / autoPlayDuration, 1);
-      setProgress(pct);
+
+      // Update DOM directly — avoids React re-render on every frame
+      if (fillRef.current) {
+        fillRef.current.style.width = `${pct * 100}%`;
+      }
 
       if (pct >= 1) {
-        goNext();
+        const next =
+          (currentIndexRef.current + 1) % testimonials.length;
+        setDirection(1);
+        setCurrentIndex(next);
+        resetProgress();
         return;
       }
 
-      progressRef.current = requestAnimationFrame(tick);
+      rafRef.current = requestAnimationFrame(tick);
     };
 
-    progressRef.current = requestAnimationFrame(tick);
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (progressRef.current) cancelAnimationFrame(progressRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [currentIndex, isPaused, autoPlayDuration, goNext]);
+  }, [currentIndex, isPaused, autoPlayDuration, testimonials.length, resetProgress]);
 
   const current = testimonials[currentIndex];
 
@@ -205,8 +230,9 @@ export default function TestimonialShowcase({
               {/* Inline progress bar */}
               <div className="testimonial-progress-track">
                 <div
+                  ref={fillRef}
                   className="testimonial-progress-fill"
-                  style={{ width: `${progress * 100}%` }}
+                  style={{ width: '0%' }}
                 />
               </div>
 

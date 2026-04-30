@@ -15,7 +15,7 @@ export default {
         sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Poppins", "Inter", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
-        pixel: ["VT323", "monospace"],
+        pixel: ['"Press Start 2P"', "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -61,6 +61,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        section: "hsl(var(--section))",
         "glass-border": "hsl(var(--glass-border))",
       },
       borderRadius: {

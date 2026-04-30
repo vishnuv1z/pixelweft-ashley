@@ -58,22 +58,37 @@ const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                className={`relative px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors duration-200 group ${
                   location.pathname === link.to
                     ? "text-foreground bg-white/[0.08]"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/[0.08]"
                 }`}
               >
-                {link.label}
+                {/* Vertically Sliding Text */}
+                <span className="relative flex overflow-hidden">
+                  <span className="transition-transform duration-300 ease-out group-hover:-translate-y-[120%] inline-block">
+                    {link.label}
+                  </span>
+                  <span className="absolute inset-0 transition-transform duration-300 ease-out translate-y-[120%] group-hover:translate-y-0 inline-block text-foreground">
+                    {link.label}
+                  </span>
+                </span>
               </Link>
             ))}
           </div>
 
           {/* Desktop Auth — Right */}
           <div className="hidden md:flex items-center gap-2 shrink-0">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-8 px-3 text-xs" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
+            <Link to="/login" className="text-muted-foreground hover:text-foreground hover:bg-white/[0.08] h-8 px-3 text-xs flex items-center justify-center rounded-md font-medium transition-colors group">
+              <span className="relative flex overflow-hidden">
+                <span className="transition-transform duration-300 ease-out group-hover:-translate-y-[120%] inline-block">
+                  Login
+                </span>
+                <span className="absolute inset-0 transition-transform duration-300 ease-out translate-y-[120%] group-hover:translate-y-0 inline-block text-foreground">
+                  Login
+                </span>
+              </span>
+            </Link>
             <Button variant="primary" size="sm" className="h-8 px-4 text-xs rounded-lg" asChild>
               <Link to="/register">Sign Up</Link>
             </Button>
@@ -93,19 +108,25 @@ const Navbar = () => {
                 key={link.to}
                 to={link.to}
                 onClick={() => setOpen(false)}
-                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname === link.to
+                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
                     ? "text-foreground bg-white/[0.08]"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
             ))}
             <div className="flex gap-2 pt-2 border-t border-white/[0.06] mt-2">
-              <Button variant="ghost" size="sm" className="text-muted-foreground h-8 text-xs" asChild>
-                <Link to="/login" onClick={() => setOpen(false)}>Login</Link>
-              </Button>
+              <Link to="/login" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground hover:bg-white/[0.08] h-8 px-3 text-xs flex items-center justify-center rounded-md font-medium transition-colors group">
+                <span className="relative flex overflow-hidden">
+                  <span className="transition-transform duration-300 ease-out group-hover:-translate-y-[120%] inline-block">
+                    Login
+                  </span>
+                  <span className="absolute inset-0 transition-transform duration-300 ease-out translate-y-[120%] group-hover:translate-y-0 inline-block text-foreground">
+                    Login
+                  </span>
+                </span>
+              </Link>
               <Button variant="primary" size="sm" className="h-8 text-xs rounded-lg" asChild>
                 <Link to="/register" onClick={() => setOpen(false)}>Sign Up</Link>
               </Button>

@@ -74,7 +74,7 @@ const Projects = () => {
                     alt={p.title} 
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-[600ms] ease-out" 
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
                 </div>
                 <div className="project-card-meta">
                   <h3 className="font-display text-lg font-semibold text-foreground">{p.title}</h3>

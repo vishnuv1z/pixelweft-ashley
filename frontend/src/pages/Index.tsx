@@ -62,7 +62,7 @@ function StackedCard({ service, index, scrollYProgress }: { key?: number, servic
       className="absolute w-full max-w-lg glass rounded-[2.5rem] p-10 flex flex-col items-center text-center gap-5 shadow-2xl border border-white/10"
     >
       <div className="p-5 rounded-3xl bg-white/5 border border-white/10 shadow-inner">
-        <service.icon size={40} className="text-indigo-400" />
+        <service.icon size={40} className="text-primary" />
       </div>
       <h3 className="text-3xl font-display font-semibold text-foreground tracking-tight">{service.title}</h3>
       <p className="text-muted-foreground text-lg leading-relaxed font-light">{service.desc}</p>
@@ -102,10 +102,10 @@ function ScrollServices() {
                     layout
                     layoutId={`card-${service.id}`}
                     transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                    className="glass rounded-3xl p-5 md:p-6 lg:p-8 flex flex-col items-start gap-3 lg:gap-4 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] hover:border-indigo-500/30 transition-colors duration-300 w-full"
+                    className="glass rounded-3xl p-5 md:p-6 lg:p-8 flex flex-col items-start gap-3 lg:gap-4 hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_0_30px_hsl(var(--primary)/0.15)] hover:border-primary/30 transition-colors duration-300 w-full"
                   >
                     <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                      <service.icon size={22} className="text-indigo-400" />
+                      <service.icon size={22} className="text-primary" />
                     </div>
                     <h3 className="text-lg md:text-xl font-display font-semibold text-foreground">{service.title}</h3>
                     <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{service.desc}</p>
@@ -237,7 +237,7 @@ const Index = () => (
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.1] text-foreground animate-fade-up" style={{ animationDelay: "0.1s" }}>
           <span className="font-display">Weaving </span>
-          <span className="font-pixel text-[1.0em] align-baseline tracking-wider">Pixels</span>
+          <span className="font-pixel text-[0.635em] align-baseline tracking-wider">Pixels</span>
           <br />
           <span className="font-display">Into </span>
           <span className="font-serif italic font-semibold">Reality</span>
@@ -272,7 +272,7 @@ const Index = () => (
     <ScrollServices />
 
     {/* Featured Projects */}
-    <section className="section-padding relative">
+    <section className="section-padding relative bg-section">
       <SectionHeading tag="Portfolio" title="Featured Projects" description="A glimpse into the digital products we've brought to life." />
       <div className="max-w-6xl mx-auto staggered-grid">
         {featuredProjects.map((p, i) => (
@@ -283,7 +283,7 @@ const Index = () => (
                 alt={p.title} 
                 className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-[600ms] ease-out" 
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
             </div>
             <div className="project-card-meta">
               <h3 className="font-display text-lg font-semibold text-foreground">{p.title}</h3>
@@ -312,7 +312,7 @@ const Index = () => (
     </section>
 
     {/* CTA */}
-    <section className="section-padding relative text-center">
+    <section className="section-padding relative text-center bg-section">
       <div className="max-w-3xl mx-auto glass p-12 md:p-16 space-y-6">
         <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">Ready to Build Something Amazing?</h2>
         <p className="text-muted-foreground text-lg">Let's turn your vision into a digital masterpiece.</p>
